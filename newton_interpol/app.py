@@ -84,6 +84,7 @@ def index():
     value = None
     latex_poly = ""
     latex_table = ""
+    steps = []
     
     if request.method == 'POST':
         try:
