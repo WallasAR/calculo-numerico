@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Métodos Numéricos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\$$', '\$$']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #212529;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .math-container {
+      overflow-x: auto;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+    .header-icon {
+      color: #0d6efd;
+      margin-right: 10px;
+    }
+    .btn-calculate {
+      background-color: #0d6efd;
+      border: none;
+      padding: 10px 25px;
+      font-weight: 500;
+      color: white;
+    }
+    .btn-calculate:hover {
+      background-color: #0b5ed7;
+    }
+    .form-control:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    .latex-step {
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+    }
+    .method-selector {
+      background-color: #f0f7ff;
+      border-left: 4px solid #0d6efd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .method-title {
+      color: #0d6efd;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    .form-select:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    .input-group-text.bg-primary {
+      background-color: #0d6efd !important;
+      border-color: #0d6efd !important;
+    }
+    .repo-link {
+      background-color: #e9ecef;
+      padding: 8px 15px;
+      border-radius: 20px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: #495057;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .repo-link:hover {
+      background-color: #0d6efd;
+      color: white;
+    }
+    .repo-link i {
+      margin-right: 6px;
+    }
+    .requirements-card {
+      background-color: #f0f7ff;
+      border-left: 4px solid #0d6efd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .requirements-title {
+      color: #0d6efd;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+    .requirement-item {
+      position: relative;
+      padding: 12px 15px 12px 35px;
+      margin-bottom: 8px;
+      background-color: white;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease;
+    }
+    .requirement-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .requirement-item::before {
+      content: "";
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background-color: #0d6efd;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <!-- Header -->
+        <div class="text-center mb-5">
+          <h1 class="display-4 fw-bold text-primary mb-3">
+            <i class="bi bi-cpu header-icon"></i>Métodos Numéricos
+          </h1>
+          <p class="lead mb-3">Implementação de métodos numéricos para encontrar raízes de funções matemáticas.</p>
+          <a href="https://github.com/WallasAR/calculo-numerico" class="repo-link mb-4" target="_blank">
+            <i class="bi bi-github"></i> Acessar Repositório
+          </a>
+          <hr class="my-4">
+        </div>
+
+        <!-- Methods Description -->
+        <div class="requirements-card">
+          <h4 class="requirements-title">
+            <i class="bi bi-calculator me-2"></i>Métodos Disponíveis
+          </h4>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="requirement-item">
+                <span><strong>Bisseção:</strong> Método que encontra raízes dividindo sucessivamente o intervalo pela metade.</span>
+              </div>
+              <div class="requirement-item">
+                <span><strong>Newton-Raphson:</strong> Método iterativo que usa a derivada da função para convergir rapidamente.</span>
+              </div>
+              <div class="requirement-item">
+                <span><strong>Ponto Fixo:</strong> Método que transforma f(x)=0 em x=g(x) e itera até convergir.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Method Selector -->
+        <div class="method-selector">
+          <h4 class="method-title">
+            <i class="bi bi-gear me-2"></i>Seleção do Método
+          </h4>
+          <form method="GET">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <div class="input-group">
+                  <label class="input-group-text bg-primary text-white fw-bold" for="method">
+                    <i class="bi bi-list-ul me-2"></i>Escolha o método
+                  </label>
+                  <select class="form-select" name="method" id="method" onchange="this.form.submit()">
+                    <option value="bissecao" {% if method == 'bissecao' %}selected{% endif %}>Método da Bisseção</option>
+                    <option value="newton" {% if method == 'newton' %}selected{% endif %}>Método de Newton-Raphson</option>
+                    <option value="ponto_fixo" {% if method == 'ponto_fixo' %}selected{% endif %}>Método do Ponto Fixo</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="row g-4">
+          <!-- Input Form -->
+          <div class="col-md-5">
+            <div class="card h-100">
+              <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-input-cursor-text me-2"></i>Dados de Entrada</h5>
+              </div>
+              <div class="card-body">
+                <form method="POST">
+                  {% if method != 'lagrange' %}
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Função f(x):</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-function"></i></span>
+                      <input type="text" name="fx" class="form-control" placeholder="Ex: x**3 - x - 2" value="{{ fx or '' }}" required>
+                    </div>
+                    <small class="text-muted">Use ** para potência, sqrt() para raiz quadrada</small>
+                  </div>
+                  {% endif %}
+
+                  {% if method == 'bissecao' %}
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Intervalo [a, b]:</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-arrows-expand"></i></span>
+                      <input type="number" name="a" step="any" class="form-control" placeholder="a" value="{{ a or '' }}" required>
+                      <input type="number" name="b" step="any" class="form-control" placeholder="b" value="{{ b or '' }}" required>
+                    </div>
+                    <small class="text-muted">Certifique-se que f(a) e f(b) têm sinais opostos</small>
+                  </div>
+                  {% endif %}
+
+                  {% if method == 'newton' %}
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Valor inicial (x₀):</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-x-diamond"></i></span>
+                      <input type="number" name="x0" step="any" class="form-control" placeholder="Ex: 1.5" value="{{ x0 or '' }}" required>
+                    </div>
+                    <small class="text-muted">Escolha um valor próximo à raiz esperada</small>
+                  </div>
+                  {% endif %}
+
+                  {% if method == 'ponto_fixo' %}
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Função g(x):</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-function"></i></span>
+                      <input type="text" name="func_gx" class="form-control" placeholder="Ex: sqrt(x + 4)" value="{{ func_gx or '' }}" required>
+                    </div>
+                    <small class="text-muted">Transforme f(x)=0 em x=g(x)</small>
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Valor inicial x₀:</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-x-diamond"></i></span>
+                      <input type="number" name="x0" step="any" class="form-control" placeholder="Ex: 2" value="{{ x0 or '' }}" required>
+                    </div>
+                  </div>
+                  {% endif %}
+
+                  <div class="mb-4">
+                    <label class="form-label fw-bold">Tolerância:</label>
+                    <div class="input-group">
+                      <span class="input-group-text"><i class="bi bi-bullseye"></i></span>
+                      <input type="number" name="tol" step="any" class="form-control" placeholder="Ex: 0.0001" value="{{ tol or '' }}" required>
+                    </div>
+                    <small class="text-muted">Precisão desejada para o resultado</small>
+                  </div>
+
+                  <div class="d-grid">
+                    <input type="hidden" name="metodo" value="{{ method }}">
+                    <button type="submit" class="btn btn-calculate btn-lg">
+                      <i class="bi bi-search me-2"></i>Calcular Raiz
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div class="col-md-7">
+            <div class="card h-100">
+              <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>Resultados</h5>
+              </div>
+              <div class="card-body">
+                {% if result %}
+                  <div class="accordion" id="resultsAccordion">
+                    <!-- Resultado Principal -->
+                    {% if result.root is defined %}
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseResult">
+                          <i class="bi bi-check-circle me-2"></i>Raiz Encontrada
+                        </button>
+                      </h2>
+                      <div id="collapseResult" class="accordion-collapse collapse show" data-bs-parent="#resultsAccordion">
+                        <div class="accordion-body">
+                          <div class="alert alert-success d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                            <div>
+                              <span class="fw-bold">Raiz: </span>
+                              <span class="fs-5 fw-bold">{{ result.root }}</span><br>
+                              <span class="fw-bold">Iterações: </span>
+                              <span class="fs-6">{{ result.iterations }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Detalhes do Método -->
+                    {% if method == 'bissecao' %}
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDetails">
+                          <i class="bi bi-info-circle me-2"></i>Detalhes do Cálculo
+                        </button>
+                      </h2>
+                      <div id="collapseDetails" class="accordion-collapse collapse" data-bs-parent="#resultsAccordion">
+                        <div class="accordion-body">
+                          <div class="math-container">
+                            <p><strong>Expressão:</strong> $$ f(x) = {{ fx }} $$</p>
+                            <p><strong>Intervalo final:</strong> $$ [{{ a_final }}, {{ b_final }}] $$</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Passos do Cálculo -->
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSteps">
+                          <i class="bi bi-list-check me-2"></i>Passos do Cálculo
+                        </button>
+                      </h2>
+                      <div id="collapseSteps" class="accordion-collapse collapse" data-bs-parent="#resultsAccordion">
+                        <div class="accordion-body">
+                          <div class="mt-3 p-3 bg-light rounded">
+                            <ul class="list-group list-group-flush">
+                              {% for step in steps %}
+                                <li class="list-group-item bg-transparent latex-step">$$ {{ step }} $$</li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="text-center p-5">
+                    <i class="bi bi-arrow-left-circle display-1 text-muted"></i>
+                    <p class="lead mt-3">Selecione um método, preencha os campos e clique em "Calcular Raiz" para ver os resultados.</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Technologies Used Section -->
+        <div class="requirements-card mt-4">
+          <h4 class="requirements-title">
+            <i class="bi bi-tools me-2"></i>Tecnologias Utilizadas
+          </h4>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="requirement-item">
+                <span><strong>Python 3</strong> — Linguagem principal para implementação dos algoritmos numéricos.</span>
+              </div>
+              <div class="requirement-item">
+                <span><strong>NumPy</strong> — Biblioteca para computação científica e operações matemáticas.</span>
+              </div>
+              <div class="requirement-item">
+                <span><strong>Flask</strong> — Microframework para desenvolvimento da aplicação web.</span>
+              </div>
+              <div class="requirement-item">
+                <span><strong>MathJax</strong> — Renderização de expressões matemáticas em LaTeX.</span>
+              </div>
+              <div class="requirement-item">
+                <span><strong>Bootstrap 5</strong> — Framework CSS para interface responsiva e moderna.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
