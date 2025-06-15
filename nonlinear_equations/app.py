@@ -1,8 +1,15 @@
-from flask import Flask, render_template, request
+import os
+from flask import Blueprint, render_template, request
 from sympy import symbols, sympify, lambdify, diff
 from sympy.core.sympify import SympifyError
 
-app = Flask(__name__)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+nonlinear_bp = Blueprint(
+    name='nonlinear', 
+    import_name=__name__, 
+    url_prefix='/nonlinear',
+    template_folder=template_dir
+)
 
 def bisection(function, a, b, epsilon):
     x = symbols('x')
@@ -75,7 +82,7 @@ def fixed_point(func_fx, func_gx, x0, epsilon):
         iter_count += 1
     return x0, steps, None, iter_count
 
-@app.route("/", methods=["GET", "POST"])
+@nonlinear_bp.route("/", methods=["GET", "POST"])
 def index():
     method = request.args.get("method", "bissecao")
     result = None
@@ -110,7 +117,7 @@ def index():
             error = "Método não implementado"
 
         return render_template(
-            "index.html",
+            "nonlinear_equations.html",
             method=method,
             result=result,
             steps=steps,
@@ -126,7 +133,4 @@ def index():
             b_final=b_final,
         )
 
-    return render_template("index.html", method=method, result=None, steps=[])
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    return render_template("nonlinear_equations.html", method=method, result=None, steps=[])

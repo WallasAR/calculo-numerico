@@ -1,8 +1,15 @@
-from flask import Flask, render_template, request
+import os
+from flask import Blueprint, render_template, request
 from sympy import symbols, sympify, lambdify
 from sympy.core.sympify import SympifyError
 
-app = Flask(__name__)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+num_integration_bp = Blueprint(
+    name='num-integration', 
+    import_name=__name__, 
+    url_prefix='/num-integration',
+    template_folder=template_dir    
+)
 
 def trapeze(f, a, b, n):
     h = (b - a) / n
@@ -22,7 +29,7 @@ def simpson(f, a, b, n):
     integral = (h / 3) * sum(w * y for w, y in zip(weights, fx))
     return integral, x_points, weights, fx
 
-@app.route("/", methods=["GET", "POST"])
+@num_integration_bp.route("/", methods=["GET", "POST"])
 def index():
     result = None
     error = None
@@ -46,7 +53,7 @@ def index():
             f = lambdify(x, expr, 'math')
         except SympifyError:
             error = "Função inválida!"
-            return render_template("index.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol)
+            return render_template("numerical_integration.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol)
 
         if n % 2 == 0:
             simpson_result = simpson(f, a, b, n)
@@ -60,7 +67,7 @@ def index():
                     pesos = w_s
                     valores = fx_s
                     metodo = "Simpson"
-                    return render_template("index.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol, erro_estimado=erro)
+                    return render_template("numerical_integration.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol, erro_estimado=erro)
                 else:
                     error = "Simpson não atingiu a tolerância desejada. Aplicando Trapézio como alternativa."
         if n % 2 != 0:
@@ -72,9 +79,6 @@ def index():
         pesos = w_t
         valores = fx_t
         metodo = "Trapézio"
-        return render_template("index.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol)
+        return render_template("numerical_integration.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol)
 
-    return render_template("index.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    return render_template("numerical_integration.html", result=result, error=error, pontos=pontos, pesos=pesos, valores=valores, metodo=metodo, fx=func_str, a=a, b=b, n=n, tol=tol)

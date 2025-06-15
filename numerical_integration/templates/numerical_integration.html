@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Integração Numérica</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\$$", "\$$"],
+          ],
+        },
+        svg: { fontCache: "global" },
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      body {
+        background-color: #f8f9fa;
+        color: #212529;
+        font-family: "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      }
+      .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .math-container {
+        overflow-x: auto;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+      }
+      .header-icon {
+        color: #0d6efd;
+        margin-right: 10px;
+      }
+      .btn-calculate {
+        background-color: #0d6efd;
+        border: none;
+        padding: 10px 25px;
+        font-weight: 500;
+      }
+      .btn-calculate:hover {
+        background-color: #0b5ed7;
+      }
+      .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      }
+      .latex-step {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 6px;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+      }
+      .method-selector {
+        background-color: #f0f7ff;
+        border-left: 4px solid #0d6efd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .method-title {
+        color: #0d6efd;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+      .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      }
+      .input-group-text.bg-primary {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+      }
+      .repo-link {
+        background-color: #e9ecef;
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: #495057;
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.9rem;
+      }
+      .repo-link:hover {
+        background-color: #0d6efd;
+        color: white;
+      }
+      .repo-link i {
+        margin-right: 6px;
+      }
+      .requirements-card {
+        background-color: #f0f7ff;
+        border-left: 4px solid #0d6efd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .requirements-title {
+        color: #0d6efd;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+      .requirement-item {
+        position: relative;
+        padding: 12px 15px 12px 35px;
+        margin-bottom: 8px;
+        background-color: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+      .requirement-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .requirement-item::before {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background-color: #0d6efd;
+        border-radius: 50%;
+      }
+      .requirement-list .requirement-item {
+        position: relative;
+        padding: 12px 15px 12px 35px;
+        margin-bottom: 8px;
+        background-color: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+      .requirement-list .requirement-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .requirement-list .requirement-item::before {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 22px;
+        width: 8px;
+        height: 8px;
+        background-color: #0d6efd;
+        border-radius: 50%;
+      }
+      .subitem-list {
+        margin-top: 8px;
+        margin-bottom: 0;
+        margin-left: 0;
+        padding-left: 25px;
+        list-style: disc;
+      }
+      .subitem-list .subitem {
+        padding-left: 0;
+        margin-bottom: 3px;
+        color: #0d6efd;
+        font-weight: 500;
+        font-size: 0.98em;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <!-- Header -->
+          <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary mb-3">
+              <i class="bi bi-bar-chart-steps header-icon"></i>Integração
+              Numérica
+            </h1>
+            <p class="lead mb-3">
+              Implementação de métodos numéricos para cálculo de integrais
+              definidas.
+            </p>
+            <a
+              href="https://github.com/WallasAR/calculo-numerico/tree/main/numerical_integration"
+              class="repo-link mb-4"
+              target="_blank"
+            >
+              <i class="bi bi-github"></i> Acessar Arquivos do Projeto
+            </a>
+            <hr class="my-4" />
+          </div>
+
+          <!-- Requirements Section - Improved -->
+          <div class="requirements-card">
+            <h4 class="requirements-title">
+              <i class="bi bi-check2-square me-2"></i>Requisitos do Projeto
+            </h4>
+            <div class="row">
+              <div class="col-md-12">
+                <ul class="requirement-list ps-0" style="list-style: none">
+                  <li class="requirement-item">
+                    A função deve aceitar como entrada:
+                    <ul class="subitem-list">
+                      <li class="subitem">A função a ser integrada</li>
+                      <li class="subitem">O intervalo [a, b]</li>
+                      <li class="subitem">O número de subintervalos n</li>
+                    </ul>
+                  </li>
+                  <li class="requirement-item">
+                    Testar qual método pode ser aplicado:
+                    <ul class="subitem-list">
+                      <li class="subitem">
+                        Se n é ímpar, Simpson não pode ser usado (avisar o
+                        usuário).
+                      </li>
+                      <li class="subitem">
+                        Se o resultado pelo método de Simpson não atender ao
+                        critério de tolerância definido, aplicar o método do
+                        Trapézio como alternativa.
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="requirement-item">
+                    Mostrar:
+                    <ul class="subitem-list">
+                      <li class="subitem">Os pontos de avaliação da função</li>
+                      <li class="subitem">Os pesos aplicados em cada método</li>
+                      <li class="subitem">
+                        O valor final da integral e o método utilizado.
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Methods Description -->
+          <div class="requirements-card">
+            <h4 class="requirements-title">
+              <i class="bi bi-calculator me-2"></i>Métodos Disponíveis
+            </h4>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="requirement-item">
+                  <span
+                    ><strong>Regra do Trapézio:</strong> Aproxima a área sob a
+                    curva usando trapézios para dividir a região de
+                    integração.</span
+                  >
+                </div>
+                <div class="requirement-item">
+                  <span
+                    ><strong>Regra de Simpson 1/3:</strong> Usa parábolas de
+                    segundo grau para aproximar a função (requer número par de
+                    subintervalos).</span
+                  >
+                </div>
+                <div class="requirement-item">
+                  <span
+                    ><strong>Adaptativo:</strong> Ajusta automaticamente o
+                    número de subintervalos para atingir a tolerância
+                    desejada.</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Integration Concepts -->
+          <div class="requirements-card">
+            <h4 class="requirements-title">
+              <i class="bi bi-info-circle me-2"></i>Conceitos Importantes
+            </h4>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="requirement-item">
+                  <span
+                    ><strong>Integral Definida:</strong> Calcula a área sob a
+                    curva f(x) no intervalo [a, b].</span
+                  >
+                </div>
+                <div class="requirement-item">
+                  <span
+                    ><strong>Subintervalos:</strong> Divisões do intervalo [a,
+                    b] para aplicar os métodos numéricos.</span
+                  >
+                </div>
+                <div class="requirement-item">
+                  <span
+                    ><strong>Tolerância:</strong> Precisão desejada para o
+                    resultado da integração.</span
+                  >
+                </div>
+                <div class="requirement-item">
+                  <span
+                    ><strong>Erro de Truncamento:</strong> Diferença entre o
+                    valor exato e o valor aproximado.</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <!-- Input Form -->
+            <div class="col-md-5">
+              <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="mb-0">
+                    <i class="bi bi-input-cursor-text me-2"></i>Dados de Entrada
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <form method="POST">
+                    <div class="mb-4">
+                      <label class="form-label fw-bold">Função f(x):</label>
+                      <div class="input-group">
+                        <span class="input-group-text"
+                          ><i class="bi bi-braces"></i
+                        ></span>
+                        <input
+                          type="text"
+                          name="fx"
+                          class="form-control"
+                          placeholder="Ex: x**2 + 1"
+                          value="{{ fx or '' }}"
+                          required
+                        />
+                      </div>
+                      <small class="text-muted"
+                        >Use ** para potência, sqrt() para raiz quadrada, sin(),
+                        cos(), etc.</small
+                      >
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="form-label fw-bold"
+                        >Intervalo de integração [a, b]:</label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text"
+                          ><i class="bi bi-arrows-expand"></i
+                        ></span>
+                        <input
+                          type="number"
+                          name="a"
+                          step="any"
+                          class="form-control"
+                          placeholder="a"
+                          value="{{ a or '' }}"
+                          required
+                        />
+                        <input
+                          type="number"
+                          name="b"
+                          step="any"
+                          class="form-control"
+                          placeholder="b"
+                          value="{{ b or '' }}"
+                          required
+                        />
+                      </div>
+                      <small class="text-muted"
+                        >Limite inferior (a) e superior (b) da integral</small
+                      >
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="form-label fw-bold"
+                        >Número de subintervalos (n):</label
+                      >
+                      <div class="input-group">
+                        <span class="input-group-text"
+                          ><i class="bi bi-grid-3x3-gap"></i
+                        ></span>
+                        <input
+                          type="number"
+                          name="n"
+                          min="1"
+                          step="1"
+                          class="form-control"
+                          placeholder="Ex: 4"
+                          value="{{ n or '' }}"
+                          required
+                        />
+                      </div>
+                      <small class="text-muted"
+                        >Para Simpson 1/3, n deve ser par. Mais subintervalos =
+                        maior precisão</small
+                      >
+                    </div>
+
+                    <div class="mb-4">
+                      <label class="form-label fw-bold">Tolerância:</label>
+                      <div class="input-group">
+                        <span class="input-group-text"
+                          ><i class="bi bi-bullseye"></i
+                        ></span>
+                        <input
+                          type="number"
+                          name="tol"
+                          step="any"
+                          class="form-control"
+                          placeholder="Ex: 0.001"
+                          value="{{ tol or '' }}"
+                          required
+                        />
+                      </div>
+                      <small class="text-muted"
+                        >Precisão desejada para o resultado da integração</small
+                      >
+                    </div>
+
+                    <div class="d-grid">
+                      <button
+                        type="submit"
+                        class="btn btn-calculate text-white btn-lg"
+                      >
+                        <i class="bi bi-calculator me-2"></i>Calcular Integral
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div class="col-md-7">
+              <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="mb-0">
+                    <i class="bi bi-bar-chart-line me-2"></i>Resultados
+                  </h5>
+                </div>
+                <div class="card-body">
+                  {% if result is not none %}
+                  <div class="accordion" id="resultsAccordion">
+                    <!-- Resultado Principal -->
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseResult"
+                        >
+                          <i class="bi bi-check-circle me-2"></i>Resultado da
+                          Integral
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseResult"
+                        class="accordion-collapse collapse show"
+                        data-bs-parent="#resultsAccordion"
+                      >
+                        <div class="accordion-body">
+                          {% if error %}
+                          <div
+                            class="alert alert-warning d-flex align-items-center"
+                          >
+                            <i
+                              class="bi bi-exclamation-triangle-fill me-2 fs-4"
+                            ></i>
+                            <div>{{ error }}</div>
+                          </div>
+                          {% else %}
+                          <div
+                            class="alert alert-success d-flex align-items-center"
+                          >
+                            <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+                            <div>
+                              <span class="fw-bold">Valor da Integral: </span>
+                              <span class="fs-5 fw-bold"
+                                >{{ result|round(6) }}</span
+                              ><br />
+                              <span class="fw-bold">Método Utilizado: </span>
+                              <span class="fs-6">{{ metodo }}</span>
+                              {% if erro_estimado is defined and erro_estimado
+                              is not none %}
+                              <br /><span class="fw-bold">Erro estimado: </span>
+                              <span class="fs-6"
+                                >{{ erro_estimado|round(6) }}</span
+                              >
+                              {% endif %}
+                            </div>
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Detalhes da Função -->
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseFunction"
+                        >
+                          <i class="bi bi-function me-2"></i>Função e Intervalo
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseFunction"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#resultsAccordion"
+                      >
+                        <div class="accordion-body">
+                          <div class="math-container">
+                            <p><strong>Integral calculada:</strong></p>
+                            <p>$$ \int_{{ a }}^{ {{ b }} } {{ fx }}\, dx $$</p>
+                            <p>
+                              <strong>Número de subintervalos:</strong> {{ n }}
+                            </p>
+                            <p>
+                              <strong>Largura de cada subintervalo (h):</strong>
+                              {{ ((b|float - a|float) / n|float)|round(6) }}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Detalhes dos Pontos -->
+                    {% if pontos is defined and pesos is defined and valores is
+                    defined %}
+                    <div class="accordion-item">
+                      <h2 class="accordion-header">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseDetails"
+                        >
+                          <i class="bi bi-list-check me-2"></i>Pontos de
+                          Avaliação
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseDetails"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#resultsAccordion"
+                      >
+                        <div class="accordion-body">
+                          <div class="math-container">
+                            <p><strong>Pontos de avaliação (xi):</strong></p>
+                            <p>
+                              [ {% for p in pontos %} {{ p|round(6) }}{% if not
+                              loop.last %}, {% endif %} {% endfor %} ]
+                            </p>
+                            <p><strong>Pesos (wi):</strong></p>
+                            <p>
+                              [ {% for w in pesos %} {{ w }}{% if not loop.last
+                              %}, {% endif %} {% endfor %} ]
+                            </p>
+                            <p><strong>f(xi) - Valores da função:</strong></p>
+                            <p>
+                              [ {% for v in valores %} {{ v|round(6) }}{% if not
+                              loop.last %}, {% endif %} {% endfor %} ]
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% else %}
+                  <div class="text-center p-5">
+                    <i class="bi bi-arrow-left-circle display-1 text-muted"></i>
+                    <p class="lead mt-3">
+                      Preencha os campos do formulário e clique em "Calcular
+                      Integral" para ver os resultados.
+                    </p>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
