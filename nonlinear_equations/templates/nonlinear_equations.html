@@ -43,7 +43,6 @@
       border: none;
       padding: 10px 25px;
       font-weight: 500;
-      color: white;
     }
     .btn-calculate:hover {
       background-color: #0b5ed7;
@@ -153,10 +152,36 @@
             <i class="bi bi-cpu header-icon"></i>Métodos Numéricos
           </h1>
           <p class="lead mb-3">Implementação de métodos numéricos para encontrar raízes de funções matemáticas.</p>
-          <a href="https://github.com/WallasAR/calculo-numerico" class="repo-link mb-4" target="_blank">
-            <i class="bi bi-github"></i> Acessar Repositório
+          <a href="https://github.com/WallasAR/calculo-numerico/tree/main/nonlinear_equations" class="repo-link mb-4" target="_blank">
+            <i class="bi bi-github"></i> Acessar Arquivos do Projeto
           </a>
           <hr class="my-4">
+        </div>
+
+        <!-- Requirements Section - Improved -->
+        <div class="requirements-card">
+          <h4 class="requirements-title">
+            <i class="bi bi-check2-square me-2"></i>Requisitos do Projeto
+          </h4>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="requirement-item">
+                <span>Escolher entre os métodos: Bisseção, Newton-Raphson ou Ponto Fixo.</span>
+              </div>
+              <div class="requirement-item">
+                <span>A função e sua derivada (se necessário) devem ser implementadas</span>
+              </div>
+              <div class="requirement-item">
+                <span>Permitir ao usuário inserir a função, os parâmetros iniciais e o critério de parada.</span>
+              </div>
+              <div class="requirement-item">
+                <span>Mostrar todas as iterações até a convergência.</span>
+              </div>
+              <div class="requirement-item">
+                <span>Validar entrada de dados: por exemplo, verificar se os extremos têm sinais opostos no caso da bisseção.</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Methods Description -->
@@ -215,7 +240,7 @@
                   <div class="mb-4">
                     <label class="form-label fw-bold">Função f(x):</label>
                     <div class="input-group">
-                      <span class="input-group-text"><i class="bi bi-function"></i></span>
+                      <span class="input-group-text"><i class="bi bi-braces"></i></span>
                       <input type="text" name="fx" class="form-control" placeholder="Ex: x**3 - x - 2" value="{{ fx or '' }}" required>
                     </div>
                     <small class="text-muted">Use ** para potência, sqrt() para raiz quadrada</small>
@@ -249,7 +274,7 @@
                   <div class="mb-4">
                     <label class="form-label fw-bold">Função g(x):</label>
                     <div class="input-group">
-                      <span class="input-group-text"><i class="bi bi-function"></i></span>
+                      <span class="input-group-text"><i class="bi bi-braces"></i></span>
                       <input type="text" name="func_gx" class="form-control" placeholder="Ex: sqrt(x + 4)" value="{{ func_gx or '' }}" required>
                     </div>
                     <small class="text-muted">Transforme f(x)=0 em x=g(x)</small>
@@ -274,7 +299,7 @@
 
                   <div class="d-grid">
                     <input type="hidden" name="metodo" value="{{ method }}">
-                    <button type="submit" class="btn btn-calculate btn-lg">
+                    <button type="submit" class="btn btn-calculate text-white btn-lg">
                       <i class="bi bi-search me-2"></i>Calcular Raiz
                     </button>
                   </div>
@@ -361,32 +386,6 @@
                     <p class="lead mt-3">Selecione um método, preencha os campos e clique em "Calcular Raiz" para ver os resultados.</p>
                   </div>
                 {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Technologies Used Section -->
-        <div class="requirements-card mt-4">
-          <h4 class="requirements-title">
-            <i class="bi bi-tools me-2"></i>Tecnologias Utilizadas
-          </h4>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="requirement-item">
-                <span><strong>Python 3</strong> — Linguagem principal para implementação dos algoritmos numéricos.</span>
-              </div>
-              <div class="requirement-item">
-                <span><strong>NumPy</strong> — Biblioteca para computação científica e operações matemáticas.</span>
-              </div>
-              <div class="requirement-item">
-                <span><strong>Flask</strong> — Microframework para desenvolvimento da aplicação web.</span>
-              </div>
-              <div class="requirement-item">
-                <span><strong>MathJax</strong> — Renderização de expressões matemáticas em LaTeX.</span>
-              </div>
-              <div class="requirement-item">
-                <span><strong>Bootstrap 5</strong> — Framework CSS para interface responsiva e moderna.</span>
               </div>
             </div>
           </div>

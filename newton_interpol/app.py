@@ -1,7 +1,14 @@
-from flask import Flask, render_template, request
+from flask import Blueprint, render_template, request
 import sympy as sp
+import os
 
-app = Flask(__name__)
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+newton_interpol_bp = Blueprint(
+    name='newton-interpol',
+    import_name=__name__,
+    url_prefix='/newton-interpol',
+    template_folder=template_dir
+)
 
 def splitDifferences(pairs):
     n = len(pairs)
@@ -77,7 +84,7 @@ def parse_input(input_str):
     return pairs
 
 # Rota principal
-@app.route('/', methods=['GET', 'POST'])
+@newton_interpol_bp.route('/', methods=['GET', 'POST'])
 def index():
     result = None
     point = None
@@ -97,14 +104,10 @@ def index():
         except Exception as e:
             result = str(e)
 
-    return render_template('index.html',
+    return render_template('newton_interpol.html',
                        result=result,
                        value=value,
                        latex_poly=latex_poly,
                        latex_table=latex_table,
                        point=point,
                        steps=steps)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
