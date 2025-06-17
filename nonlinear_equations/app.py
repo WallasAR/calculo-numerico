@@ -20,27 +20,39 @@ def bisection(function, a, b, epsilon):
         return None, [], "Função inválida", None, None, 0, None
 
     info = None
-    # Troca a e b se necessário
     if a > b:
         a, b = b, a
         info = "Os valores de a e b foram trocados para manter a < b."
 
     steps = []
     iter_count = 0
-    if f(a) * f(b) >= 0:
+
+    # Protege a avaliação de f(a) e f(b)
+    try:
+        fa = f(a)
+        fb = f(b)
+    except Exception as e:
+        return None, [], f"Erro ao avaliar f(a) ou f(b): {e}", None, None, 0, info
+
+    if fa * fb >= 0:
         return None, [], "Os extremos não têm sinais opostos", None, None, 0, info
 
     c = (a + b) / 2.0
     while (b - a) / 2.0 > epsilon:
         c = (a + b) / 2.0
-        fc = f(c)
+        try:
+            fc = f(c)
+        except Exception as e:
+            return None, steps, f"Erro ao avaliar f(c): {e}", a, b, iter_count, info
         steps.append(f"a_{iter_count} = {a:.6f}, b_{iter_count} = {b:.6f}, x_{iter_count} = {c:.6f}, f(x_{iter_count}) = {fc:.6f}")
         if fc == 0:
             break
-        elif f(a) * fc < 0:
+        elif fa * fc < 0:
             b = c
+            fb = fc
         else:
             a = c
+            fa = fc
         iter_count += 1
     return c, steps, None, a, b, iter_count, info
 
