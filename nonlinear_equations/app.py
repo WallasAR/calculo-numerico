@@ -17,12 +17,20 @@ def bisection(function, a, b, epsilon):
         expr = sympify(function)
         f = lambdify(x, expr, 'math')
     except SympifyError:
-        return None, [], "Função inválida"
+        return None, [], "Função inválida", None, None, 0, None
+
+    info = None
+    # Troca a e b se necessário
+    if a > b:
+        a, b = b, a
+        info = "Os valores de a e b foram trocados para manter a < b."
 
     steps = []
     iter_count = 0
     if f(a) * f(b) >= 0:
-        return None, [], "Os extremos não têm sinais opostos"
+        return None, [], "Os extremos não têm sinais opostos", None, None, 0, info
+
+    c = (a + b) / 2.0
     while (b - a) / 2.0 > epsilon:
         c = (a + b) / 2.0
         fc = f(c)
@@ -34,7 +42,7 @@ def bisection(function, a, b, epsilon):
         else:
             a = c
         iter_count += 1
-    return c, steps, None, a, b, iter_count
+    return c, steps, None, a, b, iter_count, info
 
 def newton_raphson(function, x0, epsilon):
     x = symbols('x')
@@ -43,16 +51,19 @@ def newton_raphson(function, x0, epsilon):
         f = lambdify(x, expr, 'math')
         f_prime = lambdify(x, diff(expr, x), 'math')
     except SympifyError:
-        return None, [], "Função inválida"
+        return None, [], "Função inválida", 0
     steps = []
     iter_count = 0
     erro = float('inf')
     max_iter = 1000
     while erro > epsilon and iter_count < max_iter:
-        fx = f(x0)
-        fpx = f_prime(x0)
+        try:
+            fx = f(x0)
+            fpx = f_prime(x0)
+        except ValueError as e:
+            return None, steps, f"Erro de domínio matemático: {e}", iter_count
         if fpx == 0:
-            return None, steps, "Derivada igual a zero"
+            return None, steps, "Derivada igual a zero", iter_count
         x1 = x0 - fx / fpx
         erro = abs(x1 - x0)
         steps.append(f"x_{iter_count} = {x0:.6f}, f(x_{iter_count}) = {fx:.6f}, f'(x_{iter_count}) = {fpx:.6f}, erro = {erro:.6f}")
@@ -65,18 +76,23 @@ def fixed_point(func_fx, func_gx, x0, epsilon):
     try:
         expr_f = sympify(func_fx)
         expr_g = sympify(func_gx)
+        if expr_f is None or expr_g is None:
+            return None, [], "Função inválida", 0
         f = lambdify(x, expr_f, 'math')
         g = lambdify(x, expr_g, 'math')
-    except SympifyError:
-        return None, [], "Erro ao interpretar funções"
+    except (SympifyError, TypeError) as e:
+        return None, [], f"Erro ao interpretar funções: {e}", 0
     steps = []
     iter_count = 0
     erro = float('inf')
     max_iter = 1000
     while erro > epsilon and iter_count < max_iter:
-        x1 = g(x0)
-        fx1 = f(x1)
-        erro = abs(x1 - x0)
+        try:
+            x1 = g(x0)
+            fx1 = f(x1)
+            erro = abs(x1 - x0)
+        except Exception as e:
+            return None, steps, f"Erro durante a iteração: {e}", iter_count
         steps.append(f"x_{iter_count} = {x0:.6f}, g(x_{iter_count}) = {x1:.6f}, f(x_{iter_count}) = {fx1:.6f}, erro = {erro:.6f}")
         x0 = x1
         iter_count += 1
@@ -89,6 +105,7 @@ def index():
     steps = []
     error = None
     a_final = b_final = None
+    info = None
 
     if request.method == "POST":
         method = request.form.get("metodo", "bissecao")
@@ -97,7 +114,7 @@ def index():
             fx = request.form.get("fx")
             a = float(request.form.get("a"))
             b = float(request.form.get("b"))
-            root, steps, error, a_final, b_final, iterations = bisection(fx, a, b, tol)
+            root, steps, error, a_final, b_final, iterations, info = bisection(fx, a, b, tol)
             if not error:
                 result = {"root": f"{root:.6f}", "iterations": iterations}
         elif method == "newton":
@@ -107,7 +124,7 @@ def index():
             if not error:
                 result = {"root": f"{root:.6f}", "iterations": iterations}
         elif method == "ponto_fixo":
-            func_fx = request.form.get("func_fx")
+            func_fx = request.form.get("fx")
             func_gx = request.form.get("func_gx")
             x0 = float(request.form.get("x0"))
             root, steps, error, iterations = fixed_point(func_fx, func_gx, x0, tol)
@@ -122,8 +139,9 @@ def index():
             result=result,
             steps=steps,
             error=error,
+            info=info,
             fx=request.form.get("fx"),
-            func_fx=request.form.get("func_fx"),
+            func_fx=request.form.get("fx"),
             func_gx=request.form.get("func_gx"),
             a=request.form.get("a"),
             b=request.form.get("b"),
